@@ -20,12 +20,40 @@ export default function SignUp() {
     event.preventDefault();
 
     const usernameExists = await doesUsernameExist(username);
-    if (usernameExists) {
+
+    // If the username doesn't exist yet, add them to the auth
+    // and add their user object to the collection
+    if (usernameExists.length === 0) {
       try {
         const createdUserResult = await firebase
           .auth()
           .createUserWithEmailAndPassword(emailAddress, password);
-      } catch (error) {}
+
+        // authentication
+        // emailAddress and password and username (displayName)
+        await createdUserResult.user.updateProfile({
+          displayName: username
+        });
+
+        // firebase user collection (create a document)
+        await firebase.firestore().collection('users').add({
+          userId: createdUserResult.user.uid,
+          username: username.toLowerCase(),
+          fullname: fullName,
+          emailAddress: emailAddress.toLowerCase(),
+          following: [],
+          dateCreated: Date.now()
+        });
+
+        history.push(ROUTES.DASHBOARD);
+      } catch (error) {
+        setFullName('');
+        setEmailAddress('');
+        setPassword('');
+        setError(error.message);
+      }
+    } else {
+      setError('That username is already taken, please try another.');
     }
   };
 
