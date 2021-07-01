@@ -8,8 +8,6 @@ export default function Header() {
   const { firebase } = useContext(FirebaseContext);
   const { user } = useContext(UserContext);
 
-  console.log('user', user);
-
   return (
     <header className="h-16 bg-white border-b border-gray-primary mb-8">
       <div className="container mx-auto max-w-lg h-full">
@@ -65,10 +63,10 @@ export default function Header() {
                     />
                   </svg>
                 </button>
-                <div className="flex items-center cursor-pointer">
+                <div className="rounded-full flex items-center cursor-pointer">
                   <Link to={`/p/${user.displayName}`}>
                     <img
-                      className="rounded full h-8 w-8 flex"
+                      className="rounded-full h-8 w-8 flex"
                       src={`/images/avatars/${user.displayName}.jpg`}
                       alt={`${user.displayName} profile`}
                     />
@@ -76,7 +74,24 @@ export default function Header() {
                 </div>
               </>
             ) : (
-              <></>
+              <>
+                <Link to={ROUTES.LOGIN}>
+                  <button
+                    className="bg-blue-medium font-bold text-sm rounded text-white w-20 h-8"
+                    type="button"
+                  >
+                    Log In
+                  </button>
+                </Link>
+                <Link to={ROUTES.SIGN_UP}>
+                  <button
+                    className="font-bold text-sm rounded text-blue-medium w-20 h-8"
+                    type="button"
+                  >
+                    Sign Up
+                  </button>
+                </Link>
+              </>
             )}
           </div>
         </div>
