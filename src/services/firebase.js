@@ -65,3 +65,34 @@ export async function updateFollowedUserFollowers(
         : FieldValue.arrayUnion(loggedInUserDocId)
     });
 }
+
+// takes in user's id and array of who they're following
+export async function getPhotos(userId, following) {
+  const result = await firebase
+    .firestore()
+    .collection('photos')
+    .where('userId', 'in', following)
+    .get();
+
+  const userFollowedPhotos = result.docs.map((photo) => ({
+    ...photo.data(),
+    docId: photo.id
+  }));
+
+  const photosWithUserDetails = await Promise.all(
+    userFollowedPhotos.map(async (photo) => {
+      let userLikedPhoto = false;
+      if (photo.likes.includes(userId)) {
+        userLikedPhoto = true;
+      }
+
+      // photo.userId = 2, then get the user with an id of 2
+      const user = await getUserByUserId(photo.userId);
+      // ex: raphael
+      const { username } = user[0];
+      return { username, ...photo, userLikedPhoto };
+    })
+  );
+
+  return photosWithUserDetails;
+}
