@@ -1,8 +1,63 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
+import useUser from '../../hooks/use-user';
+import { isUserFollowingProfile } from '../../services/firebase';
+import UserContext from '../../context/user';
 
-export default function Header() {
+export default function Header({
+  photosCount,
+  followerCount,
+  setFollowerCount,
+  profile: {
+    docId: profileDocId,
+    userId: profileUserId,
+    fullname,
+    following = [],
+    username: profileUsername
+  }
+}) {
+  const { user: loggedInUser } = useContext(UserContext);
+  const { user } = useUser(loggedInUser?.uid);
   const [isFollowingProfile, setIsFollowingProfile] = useState(false);
-  return null;
+
+  useEffect(() => {
+    const isLoggedInUserFollowingProfile = async () => {
+      const isFollowing = await isUserFollowingProfile(user.username, profileUserId);
+      setIsFollowingProfile(isFollowing);
+    };
+
+    if (user?.username && profileUserId) {
+      isLoggedInUserFollowingProfile();
+    }
+  }, [user?.username, profileUserId]);
+
+  return (
+    <div className="grid grid-cols-3 gap-4 justify-between mx-auto max-w-screen-lg">
+      <div className="container flex justify-center">
+        {profileUsername ? (
+          <img
+            className="rounded-full h-40 w-40 flex"
+            alt={`${fullname} profile`}
+            src={`/images/avatars/${profileUsername}.jpg`}
+          />
+        ) : (
+          <Skeleton circle height={150} width={150} count={1} />
+        )}
+      </div>
+    </div>
+  );
 }
+
+Header.propTypes = {
+  photosCount: PropTypes.number.isRequired,
+  followerCount: PropTypes.number.isRequired,
+  setFollowerCount: PropTypes.func.isRequired,
+  profile: PropTypes.shape({
+    docId: PropTypes.string,
+    userId: PropTypes.string,
+    fullname: PropTypes.string,
+    username: PropTypes.string,
+    following: PropTypes.array
+  }).isRequired
+};

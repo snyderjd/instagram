@@ -20,18 +20,20 @@ export default function Profile({ user }) {
   useEffect(() => {
     async function getProfileInfoAndPhotos() {
       const photos = await getUserPhotosByUsername(user.username);
-      console.log(photos, 'photos');
       dispatch({ profile: user, photosCollection: photos, followerCount: user.followers.length });
     }
 
-    if (user.username) {
-      getProfileInfoAndPhotos();
-    }
+    getProfileInfoAndPhotos();
   }, []);
 
   return (
     <>
-      <Header />
+      <Header
+        photosCount={photosCollection ? photosCollection.length : 0}
+        profile={profile}
+        followerCount={followerCount}
+        setFollowerCount={dispatch}
+      />
       <Photos photos={photosCollection} />
       <p>Hello {user.username}</p>
     </>
