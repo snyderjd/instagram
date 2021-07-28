@@ -31,8 +31,8 @@ export default function Profile({ user }) {
       <Header
         photosCount={photosCollection ? photosCollection.length : 0}
         profile={profile}
-        followerCount={followerCount}
         setFollowerCount={dispatch}
+        followerCount={followerCount}
       />
       <Photos photos={photosCollection} />
     </>
