@@ -9,7 +9,6 @@ export default function Header({
   photosCount,
   followerCount,
   setFollowerCount,
-  loggedInUsername,
   profile: {
     docId: profileDocId,
     userId: profileUserId,
@@ -104,7 +103,6 @@ Header.propTypes = {
   photosCount: PropTypes.number.isRequired,
   followerCount: PropTypes.number.isRequired,
   setFollowerCount: PropTypes.func.isRequired,
-  loggedInUsername: PropTypes.string,
   profile: PropTypes.shape({
     docId: PropTypes.string,
     userId: PropTypes.string,
